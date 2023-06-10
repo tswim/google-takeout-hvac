@@ -4,7 +4,6 @@ import (
 	"time"
 );
 
-
 type Cycle struct {
 	Caption struct {
 		Locale         string `json:"locale"`
