@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"takeout/parser/model"
 )
 
@@ -10,4 +11,10 @@ func main() {
 	dataMap["a"] = model.TakeOutSummary{};
 	fmt.Println(dataMap["a"].Events);
 	fmt.Println(dataMap["a"].Cycles);
+	jsonFile, err := os.Open("users.json")
+
+	if err != nil {
+    	fmt.Println(err)
+	}
+	defer jsonFile.Close();
 }
