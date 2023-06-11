@@ -1,13 +1,9 @@
 package model
 
-import (
-	"time"
-);
-
 type Event struct {
-	StartTs        time.Time `json:"startTs"`
+	StartTs        CustomTime `json:"startTs"`
 	TimezoneOffset int       `json:"timezoneOffset"`
-	Duration       string    `json:"duration"`
+	Duration       Duration    `json:"duration"`
 	Continuation   bool      `json:"continuation"`
 	EventType      string    `json:"eventType"`
 	SetPoint       struct {
@@ -19,7 +15,7 @@ type Event struct {
 			CoolingTarget float64 `json:"coolingTarget"`
 		} `json:"targets"`
 		TouchedBy             string    `json:"touchedBy"`
-		TouchedWhen           time.Time `json:"touchedWhen"`
+		TouchedWhen           CustomTime `json:"touchedWhen"`
 		TouchedTimezoneOffset int       `json:"touchedTimezoneOffset"`
 		TouchedWhere          string    `json:"touchedWhere"`
 		TouchedUserID         string    `json:"touchedUserId"`

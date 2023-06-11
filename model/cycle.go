@@ -1,8 +1,5 @@
 package model
 
-import (
-	"time"
-);
 
 type Cycle struct {
 	Caption struct {
@@ -11,12 +8,12 @@ type Cycle struct {
 		PlainText      string `json:"plainText"`
 		AccessibleText string `json:"accessibleText"`
 		Parameters     struct {
-			StartTime time.Time `json:"startTime"`
-			EndTime   time.Time `json:"endTime"`
+			StartTime CustomTime `json:"startTime"`
+			EndTime   CustomTime `json:"endTime"`
 		} `json:"parameters"`
 	} `json:"caption"`
-	StartTs         time.Time `json:"startTs"`
-	Duration        string    `json:"duration"`
+	StartTs         CustomTime `json:"startTs"`
+	Duration        Duration    `json:"duration"`
 	IsComplete      bool      `json:"isComplete"`
 	Heat1           bool      `json:"heat1"`
 	Heat2           bool      `json:"heat2"`

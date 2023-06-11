@@ -1,12 +1,8 @@
 package model
 
-import (
-	"time"
-);
-
 type TakeOutSummary struct {
-	StartTs                  time.Time `json:"startTs"`
-	EndTs                    time.Time `json:"endTs"`
+	StartTs                  CustomTime `json:"startTs"`
+	EndTs                    CustomTime `json:"endTs"`
 	EnergyWinner             string    `json:"energyWinner"`
 	EnergyLeaf               bool      `json:"energyLeaf"`
 	TotalHeatingSeconds      int       `json:"totalHeatingSeconds"`
