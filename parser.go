@@ -28,7 +28,12 @@ func main() {
 	}
 
 	for _, value := range dataMap {
-		fmt.Println(value.Cycles[0].Duration);
+		for i:=0; i < len(value.Cycles); i++ {
+			cycle := value.Cycles[i]
+			if (cycle.Cool1) {
+				fmt.Println(cycle.Duration)
+			}
+		}
 	}
 
 }
