@@ -9,11 +9,11 @@ import (
 )
 
 func main() {
-	var dataDir = "data/thermostats/09AA01AC37180ECT/2023/04/2023-04-summary.json"
-	
-	//var dataString string;
+	//var stats = make(map[string] string);
+	var runtime int;
+	var dataDir = "data/thermostats/09AA01AC37180ECT/2023/01/2023-01-summary.json"
 	var dataMap map[string] model.TakeOutSummary
-	//var dataMap= make(map[string] model.TakeOutSummary);
+
 	jsonFile, err := os.Open(dataDir)
 	if (err != nil) {
 		fmt.Println(err);
@@ -30,10 +30,10 @@ func main() {
 	for _, value := range dataMap {
 		for i:=0; i < len(value.Cycles); i++ {
 			cycle := value.Cycles[i]
-			if (cycle.Cool1) {
-				fmt.Println(cycle.Duration)
-			}
+		//	if (cycle.Heat1) {
+				runtime += int(cycle.Duration)
+		//	}
 		}
 	}
-
+	fmt.Println(runtime);
 }
