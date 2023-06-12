@@ -1,34 +1,39 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
-	"encoding/json"
+	"path/filepath"
+	"strings"
 	"takeout/parser/model"
 )
 var dataMap map[string] model.TakeOutSummary
-
+var rootDir = "data/thermostats/"
+var statData = map[string] map[string] map[string] float64{};
 func main() {
-	//var stats = make(map[string] string);
-	var runtime int;
- 	parseJSONFile();
-
-	for _, value := range dataMap {
-		for i:=0; i < len(value.Cycles); i++ {
-			cycle := value.Cycles[i]
-			if (cycle.Heat1) {
-				runtime += int(cycle.Duration)/60/60
+	traverseFilesystem();
+	for yearmonth, thermostats := range statData {
+		fmt.Println(yearmonth);
+		for thermostat, data := range thermostats {
+			fmt.Println(" ",thermostat);
+			for key, value := range data {
+				fmt.Print("\t");
+				fmt.Print(key, ":");
+				fmt.Printf("\t%.1f\n", value);	
 			}
 		}
 	}
-	fmt.Println(runtime);
 }
 
-func parseJSONFile() {
-	var dataDir = "data/thermostats/09AA01AC37180ECT/2023/01/2023-01-summary.json"
+func parseJSONFile(filename string) {
+    var vals[]string = strings.Split(filename,"/");
+	var thermostat = vals[len(vals)-4];
+	var yearmonth = vals[len(vals)-3] + "-" + vals[len(vals)-2];
+	createMappings(thermostat, yearmonth)
 
-	jsonFile, err := os.Open(dataDir)
+	jsonFile, err := os.Open(filename)
 	if (err != nil) {
 		fmt.Println(err);
 	}
@@ -38,7 +43,54 @@ func parseJSONFile() {
 	err  =  json.Unmarshal(byteValue, &dataMap)
 
 	if (err != nil) {
-		fmt.Println(err);
+		fmt.Println(filename," error: ", err);
 	}
 
+	for _, value := range dataMap {
+		for i:=0; i < len(value.Cycles); i++ {
+			cycle := value.Cycles[i]
+			if (cycle.Heat1) {
+				statData[yearmonth][thermostat]["Heat1Starts"]++
+				statData[yearmonth][thermostat]["Heat1Runtime"] += float64(int(cycle.Duration))/60/60
+			}
+			if (cycle.Heat2) {
+				statData[yearmonth][thermostat]["Heat2Starts"]++
+				statData[yearmonth][thermostat]["Heat2Runtime"] += float64(int(cycle.Duration))/60/60
+			}
+			if (cycle.Cool1) {
+				statData[yearmonth][thermostat]["CoolStarts"]++
+				statData[yearmonth][thermostat]["CoolRuntime"] += float64(int(cycle.Duration))/60/60;
+			}
+		}
+	}
+
+}
+func createMappings(thermostat string, yearmonth string) {
+
+	if (statData[yearmonth] == nil) {
+		statData[yearmonth]= map[string] map[string] float64{};	
+	}
+	if (statData[yearmonth][thermostat] == nil)  {
+		statData[yearmonth][thermostat] = map[string] float64{};
+		statData[yearmonth][thermostat]["Heat1Starts"] = 0;
+		statData[yearmonth][thermostat]["Heat1Runtime"] = 0;
+		statData[yearmonth][thermostat]["Heat2Starts"] = 0;
+		statData[yearmonth][thermostat]["Heat2Runtime"] = 0;
+		statData[yearmonth][thermostat]["CoolRuntime"] = 0;
+		statData[yearmonth][thermostat]["CoolStarts"] = 0;
+	}
+
+}
+func traverseFilesystem() {
+	err := filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		if !info.IsDir() && filepath.Ext(path) == ".json" {
+			//fmt.Println("Parsing: " + path)
+			parseJSONFile(path);
+		}
+		return nil
+	})
+
+	if err != nil {
+		fmt.Println("Error walking the file system:", err)
+	}
 }
