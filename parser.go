@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 	"takeout/parser/model"
+	
 )
-var dataMap map[string] model.TakeOutSummary
-var rootDir = "data/thermostats/"
+var rootDir = "data/thermostats"
 var statData = map[string] map[string] map[string] float64{};
 func main() {
 	traverseFilesystem();
@@ -37,31 +37,38 @@ func parseJSONFile(filename string) {
 	if (err != nil) {
 		fmt.Println(err);
 	}
-	defer jsonFile.Close();
+	//defer jsonFile.Close();
 	byteValue, _ := io.ReadAll(jsonFile);
-	jsonFile.Close();
+	var dataMap map[string] model.TakeOutSummary
 	err  =  json.Unmarshal(byteValue, &dataMap)
-
 	if (err != nil) {
 		fmt.Println(filename," error: ", err);
 	}
-
 	for _, value := range dataMap {
 		for i:=0; i < len(value.Cycles); i++ {
 			cycle := value.Cycles[i]
+			//seconds to minutes to hours
+			var duration = float64(cycle.Duration)/60/60;
 			if (cycle.Heat1) {
 				statData[yearmonth][thermostat]["Heat1Starts"]++
-				statData[yearmonth][thermostat]["Heat1Runtime"] += float64(int(cycle.Duration))/60/60
-			}
-			if (cycle.Heat2) {
+				statData[yearmonth][thermostat]["Heat1Runtime"] += duration;
+			} else if (cycle.Heat2){	
 				statData[yearmonth][thermostat]["Heat2Starts"]++
-				statData[yearmonth][thermostat]["Heat2Runtime"] += float64(int(cycle.Duration))/60/60
-			}
-			if (cycle.Cool1) {
+				statData[yearmonth][thermostat]["Heat2Runtime"] += duration;
+			} else if (cycle.Cool1) {
 				statData[yearmonth][thermostat]["CoolStarts"]++
-				statData[yearmonth][thermostat]["CoolRuntime"] += float64(int(cycle.Duration))/60/60;
+				statData[yearmonth][thermostat]["CoolRuntime"] += duration;
+			} else if (cycle.Fan) {
+				statData[yearmonth][thermostat]["FanStarts"]++
+			}
+			if (cycle.Fan) {
+				statData[yearmonth][thermostat]["FanRuntime"] += duration;
+			} 
+			if (cycle.Humidifier) {
+				statData[yearmonth][thermostat]["HumidifierRuntime"] += duration;
 			}
 		}
+		
 	}
 
 }
@@ -78,6 +85,10 @@ func createMappings(thermostat string, yearmonth string) {
 		statData[yearmonth][thermostat]["Heat2Runtime"] = 0;
 		statData[yearmonth][thermostat]["CoolRuntime"] = 0;
 		statData[yearmonth][thermostat]["CoolStarts"] = 0;
+		statData[yearmonth][thermostat]["HumidifierRuntime"] = 0;
+		statData[yearmonth][thermostat]["unknowns"] = 0;
+		statData[yearmonth][thermostat]["FanStarts"] = 0;	
+		statData[yearmonth][thermostat]["FanRuntime"] = 0;
 	}
 
 }
