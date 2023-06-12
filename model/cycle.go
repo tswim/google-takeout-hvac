@@ -13,7 +13,7 @@ type Cycle struct {
 		} `json:"parameters"`
 	} `json:"caption"`
 	StartTs         CustomTime `json:"startTs"`
-	Duration        Duration    `json:"duration"`
+	Duration        Duration  `json:"duration"`
 	IsComplete      bool      `json:"isComplete"`
 	Heat1           bool      `json:"heat1"`
 	Heat2           bool      `json:"heat2"`
