@@ -22,6 +22,7 @@ var startstopData = map[string]map[string]map[string]int{}
 var thermostats = map[string]string{}
 var xaxis []string
 var seriesMap = map[string]map[string]bool{}
+var barSeriesMap = map[string]map[string]bool{}
 
 func main() {
 	traverseFilesystem()
@@ -60,17 +61,17 @@ func buildStartChart() *charts.Bar {
 	bar := charts.NewBar()
 	bar.SetGlobalOptions(
 		charts.WithInitializationOpts(opts.Initialization{
-			Theme:  types.ThemeInfographic,
-			Width:  "1000px",
-			Height: "376px",
+			Theme:  types.ChartThemeRiver,
+			Width:  "90%",
+			Height: "340px",
 		}),
 		charts.WithTooltipOpts(opts.Tooltip{
 			Show:    true,
 			Trigger: "axis",
 		}),
 		charts.WithGridOpts(opts.Grid{
-			Height: "250px",
-			Width:  "850px",
+			Height: "200px",
+			Width:  "75%",
 		}),
 		charts.WithXAxisOpts(opts.XAxis{
 			Name:        "Months",
@@ -91,18 +92,15 @@ func buildStartChart() *charts.Bar {
 			Left:  "10%",
 			Align: "left",
 			//Orient: "vertical",
-			Width: "900px",
+			Width: "85%",
 			//Height: "200px",
 		}))
 
 	// Put data into instance
 	bar.SetXAxis(xaxis)
-	yearmonth := "2021-10"
-	stat := startstopData[yearmonth]
-	for thermostat, data := range stat {
+	for thermostat, data := range barSeriesMap {
 		for key := range data {
-			//		fmt.Println("Adding series", thermostat, "-", key);
-			bar.AddSeries(thermostats[thermostat]+"-"+key, generateBarItems(thermostat, key))
+			bar.AddSeries(thermostats[thermostat]+"\n"+key, generateBarItems(thermostat, key))
 		}
 	}
 
@@ -116,18 +114,18 @@ func buildRuntimeChart() *charts.Line {
 	// set some global options like Title/Legend/ToolTip or anything else
 	line.SetGlobalOptions(
 		charts.WithInitializationOpts(opts.Initialization{
-			Theme:     types.ThemeInfographic,
+			Theme:     types.ThemeShine,
 			PageTitle: "HVAC Runtime",
-			Width:     "1000px",
-			Height:    "385px",
+			Width:     "90%",
+			Height:    "345px",
 		}),
 		charts.WithTooltipOpts(opts.Tooltip{
 			Show:    true,
 			Trigger: "axis",
 		}),
 		charts.WithGridOpts(opts.Grid{
-			Height: "250px",
-			Width:  "850px",
+			Height: "225px",
+			Width:  "75%",
 		}),
 		charts.WithXAxisOpts(opts.XAxis{
 			Name:        "Months",
@@ -145,10 +143,10 @@ func buildRuntimeChart() *charts.Line {
 			//Type: "scroll",
 			Top: "bottom",
 			//Bottom: "-20%",
-			Left:  "10%",
+			Left:  "5%",
 			Align: "left",
 			//Orient: "vertical",
-			Width: "850px",
+			Width: "85%",
 			//Height: "200px",
 		}))
 
@@ -156,8 +154,7 @@ func buildRuntimeChart() *charts.Line {
 	line.SetXAxis(xaxis)
 	for thermostat, data := range seriesMap {
 		for key := range data {
-			fmt.Println("Adding series", thermostat, "-", key)
-			line.AddSeries(thermostats[thermostat]+"-"+key, generateLineItems(thermostat, key))
+			line.AddSeries(thermostats[thermostat]+"\n"+key, generateLineItems(thermostat, key))
 		}
 	}
 
@@ -171,6 +168,10 @@ func parseJSONFile(filename string) {
 	if seriesMap[thermostat] == nil {
 		seriesMap[thermostat] = map[string]bool{}
 	}
+	if barSeriesMap[thermostat] == nil {
+		barSeriesMap[thermostat] = map[string]bool{}
+	}
+
 	var yearmonth = vals[len(vals)-3] + "-" + vals[len(vals)-2]
 	createMappings(thermostat, yearmonth)
 
@@ -186,22 +187,8 @@ func parseJSONFile(filename string) {
 		fmt.Println(filename, " error: ", err)
 	}
 	for _, value := range dataMap {
-		if value.SystemCapabilities.HasStage1Heat {
-			seriesMap[thermostat][consts.H1run] = true
-		}
-		if value.SystemCapabilities.HasStage2Heat {
-			seriesMap[thermostat][consts.H2run] = true
-		}
-		if value.SystemCapabilities.HasAuxHeat {
-			seriesMap[thermostat][consts.HauxRun] = true
-		}
-		if value.SystemCapabilities.HasStage1Cool {
-			seriesMap[thermostat][consts.Crun] = true
-		}
-		if value.SystemCapabilities.HasHumidifier {
-			seriesMap[thermostat][consts.HumRun] = true
-		}
-
+		systemCapabilities(value.SystemCapabilities, thermostat);
+		
 		for i := 0; i < len(value.Cycles); i++ {
 			cycle := value.Cycles[i]
 			//seconds to minutes to hours
@@ -230,8 +217,29 @@ func parseJSONFile(filename string) {
 		}
 
 	}
-
 }
+func systemCapabilities(capabilities model.SystemCapabilities, thermostat string) {
+	if capabilities.HasStage1Heat {
+		seriesMap[thermostat][consts.H1run] = true
+		barSeriesMap[thermostat][consts.H1starts] = true
+	}
+	if capabilities.HasStage2Heat {
+		seriesMap[thermostat][consts.H2run] = true
+		barSeriesMap[thermostat][consts.H2starts] = true
+	}
+	if capabilities.HasAuxHeat {
+		seriesMap[thermostat][consts.HauxRun] = true
+		barSeriesMap[thermostat][consts.Hauxstarts] = true
+	}
+	if capabilities.HasStage1Cool {
+		seriesMap[thermostat][consts.Crun] = true
+		barSeriesMap[thermostat][consts.Cstarts] = true
+	}
+	if capabilities.HasHumidifier {
+		seriesMap[thermostat][consts.HumRun] = true
+	}
+}
+
 func createMappings(thermostat string, yearmonth string) {
 
 	if statData[yearmonth] == nil {
