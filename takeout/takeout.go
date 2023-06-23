@@ -122,12 +122,11 @@ func processCycle(cycle model.Cycle, runtime *YM, starts *YM) {
 			s := reflect.Indirect(refStart).FieldByName(key)
 
 			if r.IsValid() && r.CanSet() {
-				fmt.Println(key)
 				currentValue := r.Float()
 				r.SetFloat(currentValue + duration)
 			}
 			if s.IsValid() && s.CanSet() {
-				currentValue := r.Float()
+				currentValue := s.Float()
 				s.SetFloat(currentValue + 1)
 			}
 		}
