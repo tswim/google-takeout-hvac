@@ -1,4 +1,4 @@
-module takeout/parser
+module google-takeout/hvacparser
 
 go 1.20
 

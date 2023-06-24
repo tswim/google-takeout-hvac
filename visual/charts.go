@@ -2,29 +2,30 @@ package visual
 
 import (
 	"fmt"
+	"google-takeout/hvacparser/takeout"
 	"reflect"
-	"takeout/parser/takeout"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"
 )
 
 var xaxis []string
-var RunChart *charts.Line;
-var StartChart *charts.Bar;
-func Initialize(stats [] takeout.Thermostat) {
-	creatXAxisValues(stats[0]);
-	RunChart = buildRuntimeChart(stats);
-	StartChart = buildStartsChart(stats);
+var RunChart *charts.Line
+var StartChart *charts.Bar
+
+func Initialize(stats []takeout.Thermostat) {
+	creatXAxisValues(stats[0])
+	RunChart = buildRuntimeChart(stats)
+	StartChart = buildStartsChart(stats)
 }
 
 func creatXAxisValues(thermostat takeout.Thermostat) {
-	for _,data := range thermostat.Runtimes {
-		xaxis = append(xaxis, data.Name);
+	for _, data := range thermostat.Runtimes {
+		xaxis = append(xaxis, data.Name)
 	}
 }
 
-func buildRuntimeChart(stats [] takeout.Thermostat) *charts.Line {
+func buildRuntimeChart(stats []takeout.Thermostat) *charts.Line {
 	// create a new line instance
 	line := charts.NewLine()
 	// set some global options like Title/Legend/ToolTip or anything else
@@ -54,16 +55,16 @@ func buildRuntimeChart(stats [] takeout.Thermostat) *charts.Line {
 	for _, data := range stats {
 		v := reflect.ValueOf(data.Capabilities)
 		tov := v.Type()
-        for i:=0; i < tov.NumField(); i++ {
+		for i := 0; i < tov.NumField(); i++ {
 			key := tov.Field(i).Name
 			value := reflect.Indirect(v).FieldByName(key).Bool()
-			if (value) {
+			if value {
 				fmt.Println("Adding Series", data.Name, " ", key)
-				line.AddSeries(data.Name+"\n"+ key, generateLineItems(data.Runtimes,key))
+				line.AddSeries(data.Name+"\n"+key, generateLineItems(data.Runtimes, key))
 			}
 		}
 	}
-	
+
 	line.SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: true, ShowSymbol: true}))
 	return line
 }
@@ -73,8 +74,8 @@ func generateLineItems(runtimes []takeout.YM, key string) []opts.LineData {
 	items := make([]opts.LineData, 0)
 	for _, yearmonth := range xaxis {
 		for _, run := range runtimes {
-			duration := filterData(yearmonth,key, run)
-			if (duration >= 0) {
+			duration := filterData(yearmonth, key, run)
+			if duration >= 0 {
 				items = append(items, opts.LineData{Value: duration})
 			}
 		}
@@ -85,9 +86,9 @@ func generateBarItems(starts []takeout.YM, key string) []opts.BarData {
 	items := make([]opts.BarData, 0)
 	for _, yearmonth := range xaxis {
 		for _, run := range starts {
-			duration := filterData(yearmonth,key, run)
-			if (duration >= 0) {
-				items = append(items, opts.BarData{Value: duration});
+			duration := filterData(yearmonth, key, run)
+			if duration >= 0 {
+				items = append(items, opts.BarData{Value: duration})
 			}
 
 		}
@@ -95,23 +96,22 @@ func generateBarItems(starts []takeout.YM, key string) []opts.BarData {
 	return items
 }
 
-
-func filterData(yearmonth string, key string, ym takeout.YM) float64  {
-	if (ym.Name != yearmonth) {
-		return -1;
+func filterData(yearmonth string, key string, ym takeout.YM) float64 {
+	if ym.Name != yearmonth {
+		return -1
 	}
 
-	v := reflect.ValueOf(ym);
+	v := reflect.ValueOf(ym)
 	field := reflect.Indirect(v).FieldByName(key)
 
 	if field.Kind() == reflect.Float64 {
-    	return field.Float()
+		return field.Float()
 	}
-    
-	return 0;
+
+	return 0
 }
 
-func buildStartsChart(stats [] takeout.Thermostat) *charts.Bar {
+func buildStartsChart(stats []takeout.Thermostat) *charts.Bar {
 	// create a new line instance
 	bar := charts.NewBar()
 	// set some global options like Title/Legend/ToolTip or anything else
@@ -127,7 +127,7 @@ func buildStartsChart(stats [] takeout.Thermostat) *charts.Bar {
 			SplitNumber: 50,
 		}),
 		charts.WithYAxisOpts(opts.YAxis{
-			Name:        "Hours",
+			Name:        "Starts",
 			SplitNumber: 10,
 		}),
 		charts.WithTitleOpts(opts.Title{
@@ -141,18 +141,18 @@ func buildStartsChart(stats [] takeout.Thermostat) *charts.Bar {
 	for _, data := range stats {
 		v := reflect.ValueOf(data.Capabilities)
 		tov := v.Type()
-        for i:=0; i < tov.NumField(); i++ {
+		for i := 0; i < tov.NumField(); i++ {
 			key := tov.Field(i).Name
-			if (key != "Humidifier") {
+			if key != "Humidifier" {
 				value := reflect.Indirect(v).FieldByName(key).Bool()
-				if (value) {
+				if value {
 					fmt.Println("Adding Series", data.Name, " ", key)
-					bar.AddSeries(data.Name+"\n"+ key, generateBarItems(data.Starts,key))
+					bar.AddSeries(data.Name+"\n"+key, generateBarItems(data.Starts, key))
 				}
 			}
 		}
 	}
-	
+
 	bar.SetSeriesOptions(charts.WithBarChartOpts(opts.BarChart{RoundCap: true, Stack: "stack"}))
 	return bar
 }
