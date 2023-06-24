@@ -3,13 +3,13 @@ package takeout
 import (
 	"encoding/json"
 	"fmt"
+	"google-takeout/hvacparser/takeout/model"
 	"io"
 	"math"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
-	"takeout/parser/takeout/model"
 )
 
 var rootDir = "data/thermostats"
@@ -133,22 +133,22 @@ func processCycle(cycle model.Cycle, runtime *YM, starts *YM) {
 	}
 }
 func systemCapabilities(capabilities model.SystemCapabilities, thermostat *Thermostat) {
-	if capabilities.HasStage1Heat {
-		thermostat.Capabilities.Heat1 = true
+	if capabilities.Stage1Heat {
+		thermostat.Capabilities.Stage1Heat = true
 	}
-	if capabilities.HasStage2Heat {
-		thermostat.Capabilities.Heat2 = true
+	if capabilities.Stage2Heat {
+		thermostat.Capabilities.Stage2Heat = true
 	}
-	if capabilities.HasStage3Heat {
-		thermostat.Capabilities.Heat3 = true
+	if capabilities.AuxHeat {
+		thermostat.Capabilities.AuxHeat = true
 	}
-	if capabilities.HasAuxHeat {
-		thermostat.Capabilities.HeatAux = true
+	if capabilities.Stage1Cool {
+		thermostat.Capabilities.Stage1Cool = true
 	}
-	if capabilities.HasStage1Cool {
-		thermostat.Capabilities.Cool1 = true
+	if capabilities.Stage2Cool {
+		thermostat.Capabilities.Stage2Cool = true
 	}
-	if capabilities.HasHumidifier {
+	if capabilities.Humidifier {
 		thermostat.Capabilities.Humidifier = true
 	}
 }

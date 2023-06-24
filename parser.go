@@ -1,11 +1,9 @@
 package main
 
 import (
+	"google-takeout/hvacparser/takeout"
+	"google-takeout/hvacparser/visual"
 	"net/http"
-	"takeout/parser/takeout"
-	"takeout/parser/visual"
-	//"github.com/go-echarts/go-echarts/v2/charts"
-	//"github.com/go-echarts/go-echarts/v2/opts"
 )
 
 func main() {

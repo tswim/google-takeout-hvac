@@ -1,6 +1,5 @@
 package model
 
-
 type Cycle struct {
 	Caption struct {
 		Locale         string `json:"locale"`
@@ -13,22 +12,22 @@ type Cycle struct {
 		} `json:"parameters"`
 	} `json:"caption"`
 	StartTs         CustomTime `json:"startTs"`
-	Duration        Duration  `json:"duration"`
-	IsComplete      bool      `json:"isComplete"`
-	Heat1           bool      `json:"heat1"`
-	Heat2           bool      `json:"heat2"`
-	Heat3           bool      `json:"heat3"`
-	HeatAux         bool      `json:"heatAux"`
-	AltHeat         bool      `json:"altHeat"`
-	AltHeat2        bool      `json:"altHeat2"`
-	EmergencyHeat   bool      `json:"emergencyHeat"`
-	Cool1           bool      `json:"cool1"`
-	Cool2           bool      `json:"cool2"`
-	Cool3           bool      `json:"cool3"`
-	Fan             bool      `json:"fan"`
-	FanCooling      bool      `json:"fanCooling"`
-	Humidifier      bool      `json:"humidifier"`
-	Dehumidifier    bool      `json:"dehumidifier"`
-	AutoDehumdifier bool      `json:"autoDehumdifier"`
-	WaterHeater     bool      `json:"waterHeater"`
+	Duration        Duration   `json:"duration"`
+	IsComplete      bool       `json:"isComplete"`
+	Stage1Heat      bool       `json:"heat1"`
+	Stage2Heat      bool       `json:"heat2"`
+	Stage3Heat      bool       `json:"heat3"`
+	AuxHeat         bool       `json:"heatAux"`
+	Stage1AltHeat   bool       `json:"altHeat"`
+	Stage2AltHeat   bool       `json:"altHeat2"`
+	EmergencyHeat   bool       `json:"emergencyHeat"`
+	Stage1Cool      bool       `json:"cool1"`
+	Stage2Cool      bool       `json:"cool2"`
+	Stage3Cool      bool       `json:"cool3"`
+	Fan             bool       `json:"fan"`
+	FanCooling      bool       `json:"fanCooling"`
+	Humidifier      bool       `json:"humidifier"`
+	Dehumidifier    bool       `json:"dehumidifier"`
+	AutoDehumdifier bool       `json:"autoDehumdifier"`
+	WaterHeater     bool       `json:"waterHeater"`
 }

@@ -1,14 +1,18 @@
 package takeout
 
+import (
+	"google-takeout/hvacparser/takeout/model"
+)
+
 type YM struct {
 	Name       string
-	Heat1      float64
-	Heat2      float64
-	Heat3      float64
-	HeatAux    float64
-	Cool1      float64
-	Cool2      float64
-	Cool3      float64
+	Stage1Heat float64
+	Stage2Heat float64
+	Stage3Heat float64
+	AuxHeat    float64
+	Stage1Cool float64
+	Stage2Cool float64
+	Stage3Cool float64
 	Humidifier float64
 }
 
@@ -18,22 +22,12 @@ func newYM(name string) YM {
 
 type Thermostat struct {
 	Name         string
-	Capabilities Capabilities
+	Capabilities model.SystemCapabilities
 	Runtimes     []YM
 	Starts       []YM
 }
 
 func newStat(name string) Thermostat {
-	return Thermostat{name, Capabilities{}, []YM{}, []YM{}}
-}
-
-type Capabilities struct {
-	Heat1      bool
-	Heat2      bool
-	Heat3      bool
-	HeatAux    bool
-	Cool1      bool
-	Cool2      bool
-	Cool3      bool
-	Humidifier bool
+	t := model.SystemCapabilities{}
+	return Thermostat{name, t, []YM{}, []YM{}}
 }

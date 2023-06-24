@@ -8,7 +8,7 @@ import (
 const PageTitle = "HVAC Runtime And Starts"
 
 var InitOpts = opts.Initialization{
-	Theme:     types.ThemeRoma,
+	Theme:     types.ChartBar3D,
 	PageTitle: "HVAC Runtime and Startups",
 	Width:     "90%",
 	Height:    "320px",
