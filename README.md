@@ -1,2 +1,6 @@
 # Takeout
-Parse HVAC runtime from Google Nest Takeout data,   visualize the runtime and starts of each HVAC system
+Parse HVAC runtime from Google Nest Takeout data,   visualize the runtime and starts of each HVAC component in monthly increments
+
+
+
+
