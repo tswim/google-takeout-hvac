@@ -16,7 +16,9 @@ var rootDir = "data/thermostats"
 var Stats = []Thermostat{}
 
 func TraverseFilesystem() []Thermostat {
+	
 	err := filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		fmt.Println("Directory: ", path )
 		if !info.IsDir() && filepath.Ext(path) == ".json" {
 			fmt.Println("json file found: ", path)
 			parseJSONFile(path)

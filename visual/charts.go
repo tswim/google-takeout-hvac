@@ -10,7 +10,7 @@ import (
 )
 
 var xaxis []string
-var RunChart *charts.Line
+var RunChart *charts.Bar
 var StartChart *charts.Bar
 
 func Initialize(stats []takeout.Thermostat) {
@@ -25,9 +25,9 @@ func creatXAxisValues(thermostat takeout.Thermostat) {
 	}
 }
 
-func buildRuntimeChart(stats []takeout.Thermostat) *charts.Line {
+func buildRuntimeChart(stats []takeout.Thermostat) *charts.Bar {
 	// create a new line instance
-	line := charts.NewLine()
+	line := charts.NewBar()
 	// set some global options like Title/Legend/ToolTip or anything else
 	line.SetGlobalOptions(
 		charts.WithInitializationOpts(InitOpts),
@@ -60,12 +60,12 @@ func buildRuntimeChart(stats []takeout.Thermostat) *charts.Line {
 			value := reflect.Indirect(v).FieldByName(key).Bool()
 			if value {
 				fmt.Println("Adding Series", data.Name, " ", key)
-				line.AddSeries(data.Name+"\n"+key, generateLineItems(data.Runtimes, key))
+				line.AddSeries(data.Name+"\n"+key, generateBarItems(data.Runtimes, key))
 			}
 		}
 	}
-
-	line.SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: true, ShowSymbol: true}))
+	line.SetSeriesOptions(charts.WithBarChartOpts(opts.BarChart{RoundCap: true, Stack: "stack"}))
+//	line.SetSeriesOptions(charts.WithChartOpts(opts.LineChart{Smooth: true, ShowSymbol: true}))
 	return line
 }
 
