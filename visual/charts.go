@@ -59,7 +59,7 @@ func buildRuntimeChart(stats []takeout.Thermostat) *charts.Bar {
 			key := tov.Field(i).Name
 			value := reflect.Indirect(v).FieldByName(key).Bool()
 			if value {
-				fmt.Println("Adding Series", data.Name, " ", key)
+			//	fmt.Println("Adding Series", data.Name, " ", key)
 				line.AddSeries(data.Name+"\n"+key, generateBarItems(data.Runtimes, key))
 			}
 		}

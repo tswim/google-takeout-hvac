@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-var rootDir = "data/thermostats"
+var rootDir = "data"
 var Stats = []Thermostat{}
 
 func TraverseFilesystem() []Thermostat {

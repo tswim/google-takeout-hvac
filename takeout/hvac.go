@@ -17,6 +17,7 @@ type YM struct {
 }
 
 func newYM(name string) YM {
+	
 	return YM{name, 0, 0, 0, 0, 0, 0, 0, 0}
 }
 
